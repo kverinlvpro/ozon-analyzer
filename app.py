@@ -286,6 +286,7 @@ def build_conversion_charts(df: pd.DataFrame, date_cols) -> list[tuple]:
             line=dict(color=color, width=2),
             marker=dict(size=5),
             fill="tozeroy",
+            connectgaps=True,
             fillcolor=color.replace(")", ",0.08)").replace("rgb", "rgba") if "rgb" in color
                        else f"rgba({int(color[1:3],16)},{int(color[3:5],16)},{int(color[5:7],16)},0.08)",
         ))
@@ -756,6 +757,7 @@ if rub_rows or pct_rows:
                 x=[d for d, _ in chron], y=[v for _, v in chron],
                 mode="lines+markers", line=dict(color=color, width=2), marker=dict(size=4),
                 fill="tozeroy",
+                connectgaps=True,
                 fillcolor=f"rgba({int(color[1:3],16)},{int(color[3:5],16)},{int(color[5:7],16)},0.08)",
             ))
             pct_fig.update_layout(
@@ -818,6 +820,7 @@ for label, kws, color, is_hw in AD_METRICS:
         mode="lines+markers", name=label,
         line=dict(color=color, width=2), marker=dict(size=4),
         fill="tozeroy",
+        connectgaps=True,
         fillcolor=f"rgba({int(color[1:3],16)},{int(color[3:5],16)},{int(color[5:7],16)},0.08)",
     ))
     afig.update_layout(
@@ -873,6 +876,7 @@ for label, kws, is_hw in OP_METRICS:
         mode="lines+markers",
         line=dict(color=color, width=2), marker=dict(size=4),
         fill="tozeroy",
+        connectgaps=True,
         fillcolor=f"rgba({int(color[1:3],16)},{int(color[3:5],16)},{int(color[5:7],16)},0.08)",
     ))
     ofig.update_layout(
