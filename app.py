@@ -285,10 +285,7 @@ def build_conversion_charts(df: pd.DataFrame, date_cols) -> list[tuple]:
             name=name,
             line=dict(color=color, width=2),
             marker=dict(size=5),
-            fill="tozeroy",
             connectgaps=True,
-            fillcolor=color.replace(")", ",0.08)").replace("rgb", "rgba") if "rgb" in color
-                       else f"rgba({int(color[1:3],16)},{int(color[3:5],16)},{int(color[5:7],16)},0.08)",
         ))
         fig.update_layout(
             title=dict(text=name, font=dict(size=13, color="#e0e0e0")),
@@ -756,9 +753,7 @@ if rub_rows or pct_rows:
             pct_fig.add_trace(go.Scatter(
                 x=[d for d, _ in chron], y=[v for _, v in chron],
                 mode="lines+markers", line=dict(color=color, width=2), marker=dict(size=4),
-                fill="tozeroy",
                 connectgaps=True,
-                fillcolor=f"rgba({int(color[1:3],16)},{int(color[3:5],16)},{int(color[5:7],16)},0.08)",
             ))
             pct_fig.update_layout(
                 title=dict(text=name, font=dict(size=12, color="#e0e0e0")),
@@ -819,9 +814,7 @@ for label, kws, color, is_hw in AD_METRICS:
         x=[d for d, _ in chron], y=[v for _, v in chron],
         mode="lines+markers", name=label,
         line=dict(color=color, width=2), marker=dict(size=4),
-        fill="tozeroy",
         connectgaps=True,
-        fillcolor=f"rgba({int(color[1:3],16)},{int(color[3:5],16)},{int(color[5:7],16)},0.08)",
     ))
     afig.update_layout(
         title=dict(text=label, font=dict(size=12, color="#e0e0e0")),
@@ -875,9 +868,7 @@ for label, kws, is_hw in OP_METRICS:
         x=[d for d, _ in chron], y=vals_c,
         mode="lines+markers",
         line=dict(color=color, width=2), marker=dict(size=4),
-        fill="tozeroy",
         connectgaps=True,
-        fillcolor=f"rgba({int(color[1:3],16)},{int(color[3:5],16)},{int(color[5:7],16)},0.08)",
     ))
     ofig.update_layout(
         title=dict(text=label, font=dict(size=12, color="#e0e0e0")),
