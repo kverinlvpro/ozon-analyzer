@@ -822,7 +822,7 @@ for label, kws, color, is_hw in AD_METRICS:
         height=200, margin=dict(l=10, r=10, t=35, b=10),
         paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
         font=dict(color="#e0e0e0"),
-        xaxis=dict(gridcolor="rgba(255,255,255,0.07)"),
+        xaxis=dict(gridcolor="rgba(255,255,255,0.07)", zeroline=False, type="category"),
         yaxis=dict(gridcolor="rgba(255,255,255,0.07)"),
         showlegend=False,
     )
@@ -876,7 +876,7 @@ for label, kws, is_hw in OP_METRICS:
         height=200, margin=dict(l=10, r=10, t=35, b=10),
         paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
         font=dict(color="#e0e0e0"),
-        xaxis=dict(gridcolor="rgba(255,255,255,0.07)"),
+        xaxis=dict(gridcolor="rgba(255,255,255,0.07)", zeroline=False, type="category"),
         yaxis=dict(gridcolor="rgba(255,255,255,0.07)"),
         showlegend=False,
     )
