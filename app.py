@@ -294,7 +294,7 @@ def build_conversion_charts(df: pd.DataFrame, date_cols) -> list[tuple]:
             paper_bgcolor="rgba(0,0,0,0)",
             plot_bgcolor="rgba(0,0,0,0)",
             font=dict(color="#e0e0e0"),
-            xaxis=dict(gridcolor="rgba(255,255,255,0.07)", showticklabels=True, zeroline=False),
+            xaxis=dict(gridcolor="rgba(255,255,255,0.07)", showticklabels=True, zeroline=False, type="category"),
             yaxis=dict(gridcolor="rgba(255,255,255,0.07)", zeroline=False),
             showlegend=False,
         )
@@ -452,7 +452,7 @@ def build_traffic_section(df: pd.DataFrame, date_cols):
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
         font=dict(color="#e0e0e0"),
-        xaxis=dict(gridcolor="rgba(255,255,255,0.07)"),
+        xaxis=dict(gridcolor="rgba(255,255,255,0.07)", type="category"),
         yaxis=dict(
             title="Клики",
             gridcolor="rgba(255,255,255,0.07)",
@@ -735,7 +735,7 @@ if rub_rows or pct_rows:
                 height=220, margin=dict(l=10, r=10, t=35, b=10),
                 paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
                 font=dict(color="#e0e0e0"),
-                xaxis=dict(gridcolor="rgba(255,255,255,0.07)", zeroline=False),
+                xaxis=dict(gridcolor="rgba(255,255,255,0.07)", zeroline=False, type="category"),
                 yaxis=dict(gridcolor="rgba(255,255,255,0.07)", zeroline=False),
                 legend=dict(orientation="h", y=1.15, font=dict(size=10)),
             )
@@ -761,7 +761,7 @@ if rub_rows or pct_rows:
                 height=220, margin=dict(l=10, r=10, t=35, b=10),
                 paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
                 font=dict(color="#e0e0e0"),
-                xaxis=dict(gridcolor="rgba(255,255,255,0.07)", zeroline=False),
+                xaxis=dict(gridcolor="rgba(255,255,255,0.07)", zeroline=False, type="category"),
                 yaxis=dict(gridcolor="rgba(255,255,255,0.07)", zeroline=False),
                 showlegend=False,
             )
