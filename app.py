@@ -294,8 +294,8 @@ def build_conversion_charts(df: pd.DataFrame, date_cols) -> list[tuple]:
             paper_bgcolor="rgba(0,0,0,0)",
             plot_bgcolor="rgba(0,0,0,0)",
             font=dict(color="#e0e0e0"),
-            xaxis=dict(gridcolor="rgba(255,255,255,0.07)", showticklabels=True),
-            yaxis=dict(gridcolor="rgba(255,255,255,0.07)"),
+            xaxis=dict(gridcolor="rgba(255,255,255,0.07)", showticklabels=True, zeroline=False),
+            yaxis=dict(gridcolor="rgba(255,255,255,0.07)", zeroline=False),
             showlegend=False,
         )
         charts.append((name, fig))
@@ -456,6 +456,7 @@ def build_traffic_section(df: pd.DataFrame, date_cols):
         yaxis=dict(
             title="Клики",
             gridcolor="rgba(255,255,255,0.07)",
+            zeroline=False,
         ),
         yaxis2=dict(
             title=dict(text="Позиция", font=dict(color="#f5a623")),
@@ -734,8 +735,8 @@ if rub_rows or pct_rows:
                 height=220, margin=dict(l=10, r=10, t=35, b=10),
                 paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
                 font=dict(color="#e0e0e0"),
-                xaxis=dict(gridcolor="rgba(255,255,255,0.07)"),
-                yaxis=dict(gridcolor="rgba(255,255,255,0.07)"),
+                xaxis=dict(gridcolor="rgba(255,255,255,0.07)", zeroline=False),
+                yaxis=dict(gridcolor="rgba(255,255,255,0.07)", zeroline=False),
                 legend=dict(orientation="h", y=1.15, font=dict(size=10)),
             )
             st.plotly_chart(combined_fig, use_container_width=True)
@@ -760,8 +761,8 @@ if rub_rows or pct_rows:
                 height=220, margin=dict(l=10, r=10, t=35, b=10),
                 paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
                 font=dict(color="#e0e0e0"),
-                xaxis=dict(gridcolor="rgba(255,255,255,0.07)"),
-                yaxis=dict(gridcolor="rgba(255,255,255,0.07)"),
+                xaxis=dict(gridcolor="rgba(255,255,255,0.07)", zeroline=False),
+                yaxis=dict(gridcolor="rgba(255,255,255,0.07)", zeroline=False),
                 showlegend=False,
             )
             st.plotly_chart(pct_fig, use_container_width=True)
