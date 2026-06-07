@@ -3,6 +3,7 @@ import pandas as pd
 import plotly.graph_objects as go
 import anthropic
 import re
+import datetime
 
 st.set_page_config(page_title="Ozon Анализатор метрик", page_icon="📊", layout="wide")
 st.title("📊 Ozon — Анализатор метрик артикула")
@@ -58,7 +59,21 @@ def clean_value(val):
 
 def parse_excel(file) -> pd.DataFrame:
     df = pd.read_excel(file, header=0)
-    df.columns = [str(c).strip() for c in df.columns]
+    new_cols = []
+    for c in df.columns:
+        # Datetime / Timestamp → форматируем как дд.мм
+        if isinstance(c, (datetime.datetime, pd.Timestamp)):
+            new_cols.append(c.strftime("%d.%m"))
+        # Excel serial number (целое/float) → конвертируем в дату
+        elif isinstance(c, (int, float)) and not isinstance(c, bool) and 40000 < c < 60000:
+            try:
+                dt = pd.Timestamp("1899-12-30") + pd.Timedelta(days=int(c))
+                new_cols.append(dt.strftime("%d.%m"))
+            except Exception:
+                new_cols.append(str(c).strip())
+        else:
+            new_cols.append(str(c).strip())
+    df.columns = new_cols
     return df
 
 
