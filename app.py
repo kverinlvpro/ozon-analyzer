@@ -394,11 +394,16 @@ def build_traffic_section(df: pd.DataFrame, date_cols):
         recent = sum(v for _, v in dv[:3]) / min(3, len(dv))
         older  = sum(v for _, v in dv[3:10]) / max(len(dv[3:10]), 1)
         chg    = (recent - older) / abs(older) * 100 if older else 0.0
-        currently_rising = chg > 0
+        # Направление — по последним 2 точкам
+        if len(dv) >= 2:
+            currently_rising = dv[0][1] > dv[1][1]
+        else:
+            currently_rising = chg > 0
         bp, days = find_breakpoint(dv, currently_rising)
         summary[label] = {"recent": round(recent), "older": round(older),
                           "change_pct": round(chg, 1), "bp": bp, "days": days,
-                          "rising": currently_rising}
+                          "rising": currently_rising,
+                          "stable": abs(chg) < 3}
 
     # Plotly: клики + позиция в поиске на второй оси
     fig = go.Figure()
@@ -502,12 +507,20 @@ def build_prompt(article, trends, date_cols, price_changes=None):
         "",
         "Задачи:",
         "1. Выдели 3-5 метрик ⚠️ УХУДШИЛАСЬ, которые вызывают наибольшее беспокойство, объясни почему.",
-        "2. Для каждой — конкретная рекомендация: что проверить/изменить на карточке или в рекламе.",
-        "3. ДАТЫ СЛОМА: если несколько метрик начали падать в один день — это сигнал события. Укажи дату и выдвини гипотезу.",
-        "4. ЦЕНА: если даты изменений цены совпадают с датами слома других метрик — объясни механизм влияния.",
-        "5. Взаимосвязи метрик (CTR упал → клики упали → заказы упали).",
-        "6. Кратко про ✅ УЛУЧШИЛАСЬ — не маскирует ли что-то плохое.",
-        "7. Итог: структурная проблема или временное колебание.",
+        "2. ДАТЫ СЛОМА: если несколько метрик начали падать в один день — это сигнал события. Укажи дату и выдвини гипотезу.",
+        "3. ЦЕНА: если даты изменений цены совпадают с датами слома других метрик — объясни механизм влияния.",
+        "4. Взаимосвязи метрик (CTR упал → клики упали → заказы упали).",
+        "5. Кратко про ✅ УЛУЧШИЛАСЬ — не маскирует ли что-то плохое.",
+        "6. Итог: структурная проблема или временное колебание.",
+        "",
+        "ОБЯЗАТЕЛЬНЫЕ РАЗДЕЛЫ В КОНЦЕ ОТВЕТА (всегда, даже если всё хорошо):",
+        "## 📣 Что делать с рекламой",
+        "  Конкретные действия по рекламным кампаниям: ставки, бюджет, таргетинг, CPO, ДРР, ROMI.",
+        "  Что увеличить, что снизить, что протестировать.",
+        "",
+        "## 🖼 Что делать с контентом и воронкой",
+        "  Конкретные действия по карточке товара: фото, заголовок, описание, SEO, цена, скидка.",
+        "  Где воронка теряет покупателей (CTR → корзина → заказ) и как это исправить.",
         "",
         "ФОРМАТ ОТВЕТА — строго соблюдай:",
         "- Используй markdown-заголовки ## для разделов",
@@ -573,8 +586,8 @@ pos_count    = sum(1 for t in trends if t["positive"])
 
 c1, c2, c3, c4 = st.columns(4)
 c1.metric("Метрик всего", len(trends))
-c2.metric("Ухудшились",   neg_count, delta=f"-{neg_count}" if neg_count else "0", delta_color="inverse")
-c3.metric("Улучшились",   pos_count, delta=f"+{pos_count}" if pos_count else "0", delta_color="normal")
+c2.metric("Ухудшились",   neg_count)
+c3.metric("Улучшились",   pos_count)
 c4.metric("Дней в данных", len(date_cols))
 
 # ── Таблицы ухудшились / улучшились ──────────────────────────────────────
@@ -627,7 +640,9 @@ if traffic_summary:
                 delta=f"{s['change_pct']:+.1f}%",
                 delta_color="normal",
             )
-            if s["bp"]:
+            if s.get("stable"):
+                st.caption("Стабильно")
+            elif s["bp"]:
                 direction = "Растёт" if s.get("rising") else "Падает"
                 st.caption(f"{direction} с {s['bp']} ({s['days']} дн.)")
     if len(traffic_summary) == 2:
@@ -654,17 +669,26 @@ def render_summary(items):
         older  = sum(v for _, v in dv[3:10]) / max(len(dv[3:10]), 1)
         chg    = (recent - older) / abs(older) * 100 if older else 0.0
         # Текущее направление по факту (не оценочно)
-        currently_rising = chg > 0
-        # растёт → ищем ближайший минимум (откуда начался рост) → find_recent_trough=True
-        # падает → ищем ближайший максимум (откуда началось падение) → find_recent_trough=False
+        # Направление — по последним 2 точкам (сегодня vs вчера)
+        if len(dv) >= 2:
+            currently_rising = dv[0][1] > dv[1][1]
+        else:
+            currently_rising = chg > 0
+        # Порог: изменение < 3% → стабильно
+        is_stable = abs(chg) < 3
         bp, days = find_breakpoint(dv, currently_rising)
-        direction = "Растёт" if currently_rising else "Падает"
+        if is_stable:
+            direction = "Стабильно"
+        else:
+            direction = "Растёт" if currently_rising else "Падает"
         with cols[i]:
             st.metric(label, f"{round(recent, 1):,}",
                       delta=f"{chg:+.1f}%",
                       delta_color="inverse" if is_hw else "normal")
-            if bp:
+            if bp and not is_stable:
                 st.caption(f"{direction} с {bp} ({days} дн.)")
+            elif is_stable:
+                st.caption("Стабильно")
 
 
 # ── Блок: Конверсии ───────────────────────────────────────────────────────
@@ -846,6 +870,7 @@ st.subheader("💹 Операционная прибыль")
 OP_METRICS = [
     ("Прогноз операционной прибыли",       ["прогноз операционной прибыли"], False),
     ("Прогноз операционной прибыли на ед.", ["на ед"],                       False),
+    ("Сумма заказов",                       ["сумма заказов"],               False),
 ]
 
 op_charts        = []
